@@ -1,9 +1,9 @@
 {
     "name": "4erk/events",
     "description": "description",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "license": "proprietary",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "authors": [
         {
             "name": "4erk",
