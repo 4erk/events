@@ -17,21 +17,25 @@ readonly class Event implements Interfaces\EventInterface
 
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
     }
 
+    #[\Override]
     public function getData(): mixed
     {
         return $this->data;
     }
 
+    #[\Override]
     public function getTarget(): ?TargetInterface
     {
         return $this->target;
     }
 
+    #[\Override]
     public function isOnce(): bool
     {
         return $this->once;

@@ -12,6 +12,7 @@ class Target implements TargetInterface
      */
     private array $handlers = [];
 
+    #[\Override]
     public function on(string $event, callable $handler): void
     {
         if (!isset($this->handlers[$event])) {
@@ -20,6 +21,7 @@ class Target implements TargetInterface
         $this->handlers[$event][] = $handler;
     }
 
+    #[\Override]
     public function off(string $event, ?callable $handler): void
     {
         if (isset($this->handlers[$event])) {
@@ -30,6 +32,7 @@ class Target implements TargetInterface
         }
     }
 
+    #[\Override]
     public function once(string $event, callable $handler): void
     {
         $this->on($event, function (EventInterface $event, mixed $data) use ($handler) {
@@ -38,12 +41,14 @@ class Target implements TargetInterface
         });
     }
 
+    #[\Override]
     public function emit(string $event, mixed $data = null, ?TargetInterface $target = null): void
     {
         $eventObject = EventFactory::create($event, $data, $target);
         $this->handle($eventObject, $this);
     }
 
+    #[\Override]
     public function handle(EventInterface $event, ?TargetInterface $current): void
     {
         if (isset($this->handlers[$event->getName()])) {
