@@ -1,12 +1,12 @@
 <?php
 
 namespace Events;
-
 use Events\Interfaces\EventFactoryInterface;
+
 use Events\Interfaces\EventInterface;
 use Events\Interfaces\TargetInterface;
 
-class EventFactory implements Interfaces\EventFactoryInterface
+class EventFactory implements EventFactoryInterface
 {
 
     #[\Override]

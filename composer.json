@@ -1,9 +1,9 @@
 {
-    "name": "4erk/composer",
+    "name": "4erk/events",
     "description": "description",
     "minimum-stability": "stable",
     "license": "proprietary",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "authors": [
         {
             "name": "4erk",
