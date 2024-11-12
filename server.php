@@ -1,13 +1,19 @@
 <?php
-declare(strict_types=1);
 
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-use Swoole\Http\Server;
+require __DIR__ . '/vendor/autoload.php';
 
 
-$http = new Server('0.0.0.0', 9501);
-$http->on('request', function (Request $request, Response $response) {
-    $response->end('Composer OK');
+
+$pool = new \Swoole\Process\Pool(4);
+
+$pool->on('workerStart', function ($pool, $workerId) {
+    echo "Worker {$workerId} started\n";
 });
-$http->start();
+
+$pool->on('Message', function ($pool, $workerId, $message) {
+    echo "Worker {$workerId} received message: {$message}\n";
+});
+
+$pool->start();
+
+$pool->sendMessage('Hello, worker 0');

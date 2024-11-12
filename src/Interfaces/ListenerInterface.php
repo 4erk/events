@@ -2,8 +2,7 @@
 
 namespace Events\Interfaces;
 
-interface StreamSubscriberInterface
+interface ListenerInterface
 {
     public function handle(EventInterface $event): void;
-    public function getSubscribedEvents(): array;
 }

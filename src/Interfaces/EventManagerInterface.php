@@ -2,7 +2,6 @@
 
 namespace Events\Interfaces;
 
-interface EventManagerInterface extends SubscribableInterface, DispatchableInterface
+interface EventManagerInterface extends EmittableInterface, ListenableInterface
 {
-    public function emit(EventInterface $event): void;
 }
