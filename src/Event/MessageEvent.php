@@ -1,60 +1,43 @@
 <?php
 
-namespace Events;
+namespace Events\Event;
 
-use JsonException;
+use Events\Event;
+use Events\Interface\MessageEventInterface;
 use Yiisoft\Json\Json;
 
-class Event implements Interface\EventInterface
+class MessageEvent extends Event implements MessageEventInterface
 {
 
-    protected int $timestamp;
+    const int TYPE_SYSTEM = 0;
+    const int TYPE_EVENT = 1;
+
+
 
     public function __construct(
         protected string $name,
         protected mixed $data = null,
-        protected mixed $source = null
-    )
-    {
-        $this->init();
-    }
-
-    private function init(): void
-    {
-        $this->timestamp = (int) microtime(true) * 1000;
+        protected mixed $source = null,
+        protected int $type = self::TYPE_EVENT,
+    ) {
+        parent::__construct($name, $data, $source);
     }
 
 
-    public function getName(): string
+    public function getType(): int
     {
-        return $this->name;
+        return $this->type;
     }
 
-    public function getData(): mixed
-    {
-        return $this->data;
-    }
-
-    public function getTimestamp(): int
-    {
-        return $this->timestamp;
-    }
-
-    public function getSource(): mixed
-    {
-        return $this->source;
-    }
-
-    /**
-     * @throws JsonException
-     */
     public function __toString(): string
     {
         return Json::encode([
+
             'name'      => $this->name,
             'data'      => $this->data,
             'timestamp' => $this->timestamp,
             'source'    => $this->source,
+            'type'      => $this->type,
         ]);
     }
 
@@ -65,6 +48,7 @@ class Event implements Interface\EventInterface
             'data'      => $this->data,
             'timestamp' => $this->timestamp,
             'source'    => $this->source,
+            'type'      => $this->type,
         ];
     }
 
@@ -74,5 +58,6 @@ class Event implements Interface\EventInterface
         $this->data = $data['data'];
         $this->timestamp = $data['timestamp'];
         $this->source = $data['source'];
+        $this->type = $data['type'];
     }
 }

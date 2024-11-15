@@ -11,3 +11,4 @@ services:
       - ./:/var/www
     ports:
       - "80:9501"
+      - "81:9502"
