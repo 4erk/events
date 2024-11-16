@@ -2,7 +2,7 @@
 
 namespace Events\Interface;
 
-interface EventManagerInterface
+interface EventDispatcherInterface
 {
     /**
      * @param string                        $name
@@ -19,9 +19,16 @@ interface EventManagerInterface
     public function off(string $name, callable $listener): void;
 
     /**
-     * @param string     $name
-     * @param mixed $data
+     * @param string                        $name
+     * @param callable(EventInterface):void $listener
      * @return void
      */
-    public function emit(string $name, mixed $data = null, mixed $source = null): void;
+    public function once(string $name, callable $listener): void;
+
+    /**
+     * @param string $name
+     * @param mixed  $data
+     * @return void
+     */
+    public function emit(string $name, mixed $data = null): void;
 }

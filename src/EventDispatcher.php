@@ -3,16 +3,19 @@
 namespace Events;
 
 use Events\Interface\EventInterface;
-use Events\Interface\EventManagerInterface;
+use Events\Interface\EventDispatcherInterface;
 
-class EventManager implements EventManagerInterface
+class EventDispatcher implements EventDispatcherInterface
 {
     private array $listeners = [];
 
     /**
+     * @param string   $name
+     * @param callable $listener
+     * @param bool     $once
      * @inheritdoc
      */
-    public function on(string $name, callable $listener): void
+    public function on(string $name, callable $listener, bool $once = false): void
     {
         if (!isset($this->listeners[$name])) {
             $this->listeners[$name] = [];
@@ -38,14 +41,21 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritdoc
      */
-    public function emit(string $name, mixed $data = null, mixed $source = null): void
+    public function emit(string $name, mixed $data = null): void
     {
         if (!isset($this->listeners[$name])) {
             return;
         }
-        $event = $data instanceof EventInterface ? $data : new Event($name, $data, $source ?? $this);
         foreach ($this->listeners[$name] as $listener) {
-            $listener($event);
+            $listener($data);
         }
+    }
+
+    public function once(string $name, callable $listener): void
+    {
+        $this->on($name, function ($data) use ($name, $listener) {
+            $this->off($name, $listener);
+            $listener($data);
+        });
     }
 }

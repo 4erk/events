@@ -1,21 +1,32 @@
 <?php
 
+
+use Events\PoolEventDispatcher;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-$pool = new \Swoole\Process\Pool(2);
 
-$pool->on('workerStart', function ($pool, $workerId) {
-    echo "Worker {$workerId} started\n";
-    $server = new Swoole\Http\Server('0.0.0.0', 9501 + $workerId);
+$pool = new PoolEventDispatcher(3);
 
-    $server->on('request', function ($request, $response) use ($workerId)  {
-        $response->end('Hello, World! Worker ID: '.$workerId);
-    });
-    $server->start();
+$pool->on('test', function ($data) use ($pool) {
+    echo "Received data: {$data}\n";
+    $pool->emit('test2', 'Hello, from master');
+});
+
+$pool->on(\Events\Pool::EVENT_WORKER_START, function () use ($pool) {
+    $pool->emit('test', 'Hello, from worker');
 });
 
 
 $pool->start();
+
+
+
+
+
+
+
+
 
 
 
