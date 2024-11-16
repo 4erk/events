@@ -23,8 +23,13 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
     private EventDispatcherInterface $dispatcher;
     private Table $table;
 
-    public function __construct(private readonly int $size) {
+    public function __construct(private readonly int $size)
+    {
         $this->pool = new SwoolePool($size, SWOOLE_IPC_UNIXSOCK);
+        $this->pool->set([
+            'enable_coroutine'   => true,
+            'enable_message_bus' => true,
+        ]);
         $this->dispatcher = new EventDispatcher();
         $this->table = new Table($this->size);
         $this->table->column('id', Table::TYPE_INT);
@@ -39,8 +44,9 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
 
             if ($this->isMaster()) {
                 $this->emit(self::EVENT_START, $workerId);
-            } else {
-                $this->table->set($workerId, ['id' => $workerId,'status' => 1]);
+            }
+            else {
+                $this->table->set($workerId, ['id' => $workerId, 'status' => 1]);
                 $this->emit(self::EVENT_WORKER_START, $workerId);
             }
         });
@@ -57,7 +63,8 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
             $event = unserialize($data, ['allowed_classes' => true]);
             if ($this->isMaster()) {
                 $this->emit(self::EVENT_MESSAGE, $event);
-            } else {
+            }
+            else {
                 $this->emit(self::EVENT_WORKER_MESSAGE, $event);
             }
         });
@@ -115,15 +122,18 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
         return $this->table->get($id, 'id') === 1;
     }
 
-    public function start(): void {
+    public function start(): void
+    {
         $this->pool->start();
     }
 
-    public function stop(): void {
+    public function stop(): void
+    {
         $this->pool->shutdown();
     }
 
-    public function sendMessage(mixed $data, int $id): void {
+    public function sendMessage(mixed $data, int $id): void
+    {
         $this->pool->sendMessage(serialize($data), $id);
     }
 
@@ -133,7 +143,7 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
         $size = $this->size;
         $workers = [];
         for ($i = 1; $i < $size; $i++) {
-            $workers[$i] = (bool)$this->table->get($i, 'id');
+            $workers[$i] = (bool) $this->table->get($i, 'id');
         }
         return $workers;
     }
