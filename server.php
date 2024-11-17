@@ -9,30 +9,30 @@ use function Swoole\Coroutine\run;
 require_once __DIR__ . '/vendor/autoload.php';
 
 
-$pool = new PoolEventDispatcher(3);
+$pool = new PoolEventDispatcher(4);
 
-$pool->on('test', function ($data) use ($pool) {
-    echo "Received data: {$data}\n";
-    Timer::tick(1000, function () use ($pool) {
-        echo "Tick\n";
-        $pool->emit('test2', 'Ticking...');
+$pool->once(\Events\Pool::EVENT_START, function() use ($pool) {
+    $pool->emit('child_start');
+});
+
+$pool->once('child_start', function() use ($pool) {
+    $child = new PoolEventDispatcher(4);
+    $child->enableCoroutine();
+    $child->once(\Events\Pool::EVENT_START, function() use ($child) {
+        $child->emit('timer', 'Hello, from child');
     });
+    $child->once('timer', function($data) {
+        Timer::tick(1000, function () use ($data) {
+            echo $data . "\n";
+
+        });
+    });
+    $child->start();
 });
-
-$pool->on('test2', function ($data) use ($pool) {
-    echo "Received data: {$data}\n";
-});
-
-
-
-
-
-$pool->on(\Events\Pool::EVENT_START, function () use ($pool) {
-    $pool->emit('test', 'Hello, from test');
-});
-
 
 $pool->start();
+
+
 
 
 

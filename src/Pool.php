@@ -27,7 +27,7 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
     {
         $this->pool = new SwoolePool($size, SWOOLE_IPC_UNIXSOCK);
         $this->pool->set([
-            'enable_coroutine'   => true,
+            'enable_coroutine'   => false,
             'enable_message_bus' => true,
         ]);
         $this->dispatcher = new EventDispatcher();
@@ -75,6 +75,10 @@ class Pool implements Interface\EventDispatcherInterface, PoolInterface
     {
         return $this->id;
 
+    }
+
+    public function enableCoroutine(bool $enable = true): void {
+        $this->pool->set(['enable_coroutine' => $enable]);
     }
 
 

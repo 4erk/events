@@ -27,6 +27,14 @@ class PoolEventDispatcher implements Interface\EventDispatcherInterface
         });
     }
 
+    public function getId(): int {
+        return $this->pool->getId();
+    }
+
+    public function enableCoroutine(bool $enable = true): void {
+        $this->pool->enableCoroutine($enable);
+    }
+
     public function on(string $name, callable $listener): void
     {
         $this->pool->on($name, $listener);
